@@ -1,1 +1,1 @@
-# efficient-e2e-el
+# Highly Parallel Autoregressive Entity Linking<br>with Discriminative Correction

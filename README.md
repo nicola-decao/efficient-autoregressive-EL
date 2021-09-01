@@ -40,7 +40,13 @@ West Indian all-rounder Phil Simmons took four for 38 on Friday as Leicestershir
 by an innings and 39 runs in two days to take over at the head of the county championship ."""
 
 # getting spans from the model and converting the result into Markdown for visualization
-Markdown(get_markdown([s], [[(s[0], s[1], s[2][0][0]) for s in spans] for spans in  model.sample([s])])[0])
+Markdown(
+    get_markdown(
+        [s],
+        [[(s[0], s[1], s[2][0][0]) for s in spans] 
+         for spans in  model.sample([s])]
+    )[0]
+)
 ```
 
 

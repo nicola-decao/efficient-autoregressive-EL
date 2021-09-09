@@ -2,7 +2,7 @@
 
 ## Overview
 
-This repository contains the Pytorch implementation of [[1]](#citation)(https://arxiv.org/abs/TBA).
+This repository contains the Pytorch implementation of [[1]](#citation)(https://arxiv.org/abs/2109.03792).
 
 Here the [link](https://mega.nz/folder/l4RhnIxL#_oYvidq2qyDIw1sT-KeMQA) to **pre-processed data** used for this work (i.e., training, validation and test splits of AIDA as well as the KB with the entities) and the **released model**.
 
@@ -79,6 +79,7 @@ BibTeX format:
     Titov, Ivan},
   journal={Proceedings of the 2020 Conference on Empirical Methods in 
            Natural Language Processing (EMNLP2021)},
+  url={https://arxiv.org/abs/2109.03792},
   year={2021}
 }
 ```

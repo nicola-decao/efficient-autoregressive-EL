@@ -17,10 +17,7 @@ class LSTM(torch.nn.Module):
         self.lm_head = lm_head
         self.dropout = dropout
 
-        self.lstm_cell = torch.nn.LSTMCell(
-            input_size=2 * 768,
-            hidden_size=768,
-        )
+        self.lstm_cell = torch.nn.LSTMCell(input_size=2 * 768, hidden_size=768,)
 
     def _roll(
         self,
@@ -89,8 +86,7 @@ class LSTM(torch.nn.Module):
 
         emb = self.embeddings(previous_tokens)
         decoder_hidden, decoder_context = self.lstm_cell(
-            torch.cat((emb, decoder_append), dim=-1),
-            (decoder_hidden, decoder_context),
+            torch.cat((emb, decoder_append), dim=-1), (decoder_hidden, decoder_context),
         )
 
         logits = self.lm_head(decoder_hidden)
@@ -206,11 +202,9 @@ class EntityLinkingLSTM(torch.nn.Module):
             decoder_append,
         ) = self._get_hidden_context_append_vectors(batch, hidden_states)
 
-        (
-            all_contexts_positive,
-            all_contexts_negative,
-            lprobs_lm,
-        ) = self.lstm.forward(batch, decoder_hidden, decoder_context, decoder_append)
+        (all_contexts_positive, all_contexts_negative, lprobs_lm,) = self.lstm.forward(
+            batch, decoder_hidden, decoder_context, decoder_append
+        )
 
         logits_classifier = self.classifier(
             torch.cat(
@@ -269,11 +263,7 @@ class EntityLinkingLSTM(torch.nn.Module):
 
         classifier_scores = self.classifier(
             torch.cat(
-                (
-                    decoder_append[batch["offsets_candidates"]],
-                    all_contexts,
-                ),
-                dim=-1,
+                (decoder_append[batch["offsets_candidates"]], all_contexts,), dim=-1,
             )
         ).squeeze(-1)
 
@@ -333,10 +323,7 @@ class EntityLinkingLSTM(torch.nn.Module):
 
         classifier_scores = self.classifier(
             torch.cat(
-                (
-                    decoder_append.unsqueeze(1).repeat(1, beams, 1),
-                    all_contexts,
-                ),
+                (decoder_append.unsqueeze(1).repeat(1, beams, 1), all_contexts,),
                 dim=-1,
             )
         ).squeeze(-1)

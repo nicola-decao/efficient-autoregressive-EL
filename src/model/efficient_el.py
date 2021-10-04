@@ -32,19 +32,13 @@ class EfficientEL(LightningModule):
     def add_model_specific_args(parent_parser):
         parser = ArgumentParser(parents=[parent_parser], add_help=False)
         parser.add_argument(
-            "--train_data_path",
-            type=str,
-            default="../data/aida_train_dataset.jsonl",
+            "--train_data_path", type=str, default="../data/aida_train_dataset.jsonl",
         )
         parser.add_argument(
-            "--dev_data_path",
-            type=str,
-            default="../data/aida_val_dataset.jsonl",
+            "--dev_data_path", type=str, default="../data/aida_val_dataset.jsonl",
         )
         parser.add_argument(
-            "--test_data_path",
-            type=str,
-            default="../data/aida_test_dataset.jsonl",
+            "--test_data_path", type=str, default="../data/aida_test_dataset.jsonl",
         )
         parser.add_argument("--batch_size", type=int, default=2)
         parser.add_argument("--lr_transformer", type=float, default=1e-4)
@@ -66,14 +60,10 @@ class EfficientEL(LightningModule):
             "--model_name", type=str, default="allenai/longformer-base-4096"
         )
         parser.add_argument(
-            "--mentions_filename",
-            type=str,
-            default="../data/mentions.json",
+            "--mentions_filename", type=str, default="../data/mentions.json",
         )
         parser.add_argument(
-            "--entities_filename",
-            type=str,
-            default="../data/entities.json",
+            "--entities_filename", type=str, default="../data/entities.json",
         )
         parser.add_argument("--epsilon", type=float, default=0.1)
         return parser
@@ -85,9 +75,7 @@ class EfficientEL(LightningModule):
         self.tokenizer = AutoTokenizer.from_pretrained(self.hparams.model_name)
 
         longformer = LongformerForMaskedLM.from_pretrained(
-            self.hparams.model_name,
-            num_hidden_layers=8,
-            attention_window=[128] * 8,
+            self.hparams.model_name, num_hidden_layers=8, attention_window=[128] * 8,
         )
 
         self.encoder = longformer.longformer
@@ -180,9 +168,9 @@ class EfficientEL(LightningModule):
             input_ids=batch["src_input_ids"], attention_mask=batch["src_attention_mask"]
         ).last_hidden_state
 
-        (start, end, scores_ed), (
-            logits_classifier_start,
-            logits_classifier_end,
+        (
+            (start, end, scores_ed),
+            (logits_classifier_start, logits_classifier_end,),
         ) = self.entity_detection.forward_hard(
             batch, hidden_states, threshold=self.hparams.threshold
         )
@@ -254,12 +242,15 @@ class EfficientEL(LightningModule):
             input_ids=batch["src_input_ids"], attention_mask=batch["src_attention_mask"]
         ).last_hidden_state
 
-        (start, end, scores_ed), (
-            logits_classifier_start,
-            logits_classifier_end,
+        (
+            (start, end, scores_ed),
+            (logits_classifier_start, logits_classifier_end,),
         ) = self.entity_detection.forward_hard(
             batch, hidden_states, threshold=self.hparams.threshold
         )
+
+        if start.shape[0] == 0:
+            return []
 
         batch["offsets_start"] = start.T.tolist()
         batch["offsets_end"] = end.T.tolist()
@@ -290,9 +281,7 @@ class EfficientEL(LightningModule):
             batch_trie_dict = [self.global_trie] * start.shape[0]
 
         tokens, scores_el = self.entity_linking.forward_beam_search(
-            batch,
-            hidden_states,
-            batch_trie_dict,
+            batch, hidden_states, batch_trie_dict,
         )
 
         return self._tokens_scores_to_spans(batch, start, end, tokens, scores_el)
@@ -352,8 +341,7 @@ class EfficientEL(LightningModule):
 
         return {"loss": loss_start + loss_end + loss_generation + loss_classifier}
 
-    def validation_step(self, batch, batch_idx=None):
-
+    def _inference_step(self, batch, batch_idx=None):
         if self.hparams.test_with_beam_search_no_candidates:
             spans = self.forward_beam_search(batch)
         elif self.hparams.test_with_beam_search:
@@ -385,7 +373,7 @@ class EfficientEL(LightningModule):
             self.ed_macro_prec(p_, g_)
             self.ed_macro_rec(p_, g_)
 
-        metrics = {
+        return {
             "micro_f1": self.micro_f1,
             "micro_prec": self.micro_prec,
             "macro_rec": self.macro_rec,
@@ -400,14 +388,15 @@ class EfficientEL(LightningModule):
             "ed_macro_rec": self.ed_macro_rec,
         }
 
+    def validation_step(self, batch, batch_idx=None):
+        metrics = self._inference_step(batch, batch_idx)
         self.log_dict(
             {k: v for k, v in metrics.items() if k in ("micro_f1", "ed_micro_f1")},
             prog_bar=True,
         )
-        return metrics
 
     def test_step(self, batch, batch_idx=None):
-        metrics = self.validation_step(batch, batch_idx)
+        metrics = self._inference_step(batch, batch_idx)
         self.log_dict(metrics)
 
     def generate_global_trie(self):
@@ -527,6 +516,7 @@ class EfficientEL(LightningModule):
             num_training_steps=self.hparams.total_num_updates,
         )
 
-        return [optimizer], [
-            {"scheduler": scheduler, "interval": "step", "frequency": 1}
-        ]
+        return (
+            [optimizer],
+            [{"scheduler": scheduler, "interval": "step", "frequency": 1}],
+        )

@@ -67,10 +67,7 @@ def beam_search(
         device = hidden[0].device if isinstance(hidden, tuple) else hidden.device
 
         prev_y = torch.full(
-            size=[batch_size],
-            fill_value=bos_idx,
-            dtype=torch.long,
-            device=device,
+            size=[batch_size], fill_value=bos_idx, dtype=torch.long, device=device,
         )
 
         # Tile hidden decoder states and encoder outputs beam_width times
@@ -85,10 +82,7 @@ def beam_search(
             device=device,
         )
         alive_seq = torch.full(
-            [batch_size * beam_width, 1],
-            bos_idx,
-            dtype=torch.long,
-            device=device,
+            [batch_size * beam_width, 1], bos_idx, dtype=torch.long, device=device,
         )
 
         # Give full probability to the first beam on the first step.
@@ -106,10 +100,7 @@ def beam_search(
         results["contexts"] = [[] for _ in range(batch_size)]
 
         done = torch.full(
-            [batch_size, beam_width],
-            False,
-            dtype=torch.bool,
-            device=device,
+            [batch_size, beam_width], False, dtype=torch.bool, device=device,
         )
         trie_idx = (
             torch.arange(0, batch_size, device=device)

@@ -8,7 +8,12 @@ from torch.utils.data import Dataset
 
 class DatasetEL(Dataset):
     def __init__(
-        self, tokenizer, data_path, max_length=32, max_length_span=15, test=False,
+        self,
+        tokenizer,
+        data_path,
+        max_length=32,
+        max_length_span=15,
+        test=False,
     ):
         super().__init__()
         self.tokenizer = tokenizer

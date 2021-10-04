@@ -57,7 +57,10 @@ class EntityDetectionFactor(torch.nn.Module):
             (
                 batch["src_attention_mask"],
                 torch.zeros(
-                    (batch["src_attention_mask"].shape[0], self.max_length_span - 1,),
+                    (
+                        batch["src_attention_mask"].shape[0],
+                        self.max_length_span - 1,
+                    ),
                     dtype=torch.float,
                     device=hidden_states.device,
                 ),
@@ -65,7 +68,9 @@ class EntityDetectionFactor(torch.nn.Module):
             dim=1,
         )
         mask = torch.where(
-            mask.bool(), torch.zeros_like(mask), -torch.full_like(mask, float("inf")),
+            mask.bool(),
+            torch.zeros_like(mask),
+            -torch.full_like(mask, float("inf")),
         ).unfold(1, self.max_length_span, 1)[offsets_start]
 
         return logits_classifier_end + mask
@@ -113,7 +118,10 @@ class EntityDetectionFactor(torch.nn.Module):
                 start = start[mention_mask]
                 end = end[mention_mask]
 
-        return (start, end, scores), (logits_classifier_start, logits_classifier_end,)
+        return (start, end, scores), (
+            logits_classifier_start,
+            logits_classifier_end,
+        )
 
     def forward_loss(self, batch, hidden_states):
         logits_classifier_start, logits_classifier_end = self.forward(
@@ -135,7 +143,8 @@ class EntityDetectionFactor(torch.nn.Module):
         )
 
         loss_end = torch.nn.functional.cross_entropy(
-            logits_classifier_end, batch["labels_end"],
+            logits_classifier_end,
+            batch["labels_end"],
         )
 
         return loss_start, loss_end

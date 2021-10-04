@@ -32,13 +32,19 @@ class EfficientEL(LightningModule):
     def add_model_specific_args(parent_parser):
         parser = ArgumentParser(parents=[parent_parser], add_help=False)
         parser.add_argument(
-            "--train_data_path", type=str, default="../data/aida_train_dataset.jsonl",
+            "--train_data_path",
+            type=str,
+            default="../data/aida_train_dataset.jsonl",
         )
         parser.add_argument(
-            "--dev_data_path", type=str, default="../data/aida_val_dataset.jsonl",
+            "--dev_data_path",
+            type=str,
+            default="../data/aida_val_dataset.jsonl",
         )
         parser.add_argument(
-            "--test_data_path", type=str, default="../data/aida_test_dataset.jsonl",
+            "--test_data_path",
+            type=str,
+            default="../data/aida_test_dataset.jsonl",
         )
         parser.add_argument("--batch_size", type=int, default=2)
         parser.add_argument("--lr_transformer", type=float, default=1e-4)
@@ -60,10 +66,14 @@ class EfficientEL(LightningModule):
             "--model_name", type=str, default="allenai/longformer-base-4096"
         )
         parser.add_argument(
-            "--mentions_filename", type=str, default="../data/mentions.json",
+            "--mentions_filename",
+            type=str,
+            default="../data/mentions.json",
         )
         parser.add_argument(
-            "--entities_filename", type=str, default="../data/entities.json",
+            "--entities_filename",
+            type=str,
+            default="../data/entities.json",
         )
         parser.add_argument("--epsilon", type=float, default=0.1)
         return parser
@@ -75,7 +85,9 @@ class EfficientEL(LightningModule):
         self.tokenizer = AutoTokenizer.from_pretrained(self.hparams.model_name)
 
         longformer = LongformerForMaskedLM.from_pretrained(
-            self.hparams.model_name, num_hidden_layers=8, attention_window=[128] * 8,
+            self.hparams.model_name,
+            num_hidden_layers=8,
+            attention_window=[128] * 8,
         )
 
         self.encoder = longformer.longformer
@@ -170,11 +182,14 @@ class EfficientEL(LightningModule):
 
         (
             (start, end, scores_ed),
-            (logits_classifier_start, logits_classifier_end,),
+            (
+                logits_classifier_start,
+                logits_classifier_end,
+            ),
         ) = self.entity_detection.forward_hard(
             batch, hidden_states, threshold=self.hparams.threshold
         )
-        
+
         if start.shape[0] == 0:
             return []
 
@@ -247,11 +262,14 @@ class EfficientEL(LightningModule):
 
         (
             (start, end, scores_ed),
-            (logits_classifier_start, logits_classifier_end,),
+            (
+                logits_classifier_start,
+                logits_classifier_end,
+            ),
         ) = self.entity_detection.forward_hard(
             batch, hidden_states, threshold=self.hparams.threshold
         )
-        
+
         if start.shape[0] == 0:
             return []
 
@@ -287,7 +305,9 @@ class EfficientEL(LightningModule):
             batch_trie_dict = [self.global_trie] * start.shape[0]
 
         tokens, scores_el = self.entity_linking.forward_beam_search(
-            batch, hidden_states, batch_trie_dict,
+            batch,
+            hidden_states,
+            batch_trie_dict,
         )
 
         return self._tokens_scores_to_spans(batch, start, end, tokens, scores_el)

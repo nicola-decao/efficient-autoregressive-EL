@@ -174,6 +174,9 @@ class EfficientEL(LightningModule):
         ) = self.entity_detection.forward_hard(
             batch, hidden_states, threshold=self.hparams.threshold
         )
+        
+        if start.shape[0] == 0:
+            return []
 
         batch["offsets_start"] = start.T.tolist()
         batch["offsets_end"] = end.T.tolist()
@@ -248,6 +251,9 @@ class EfficientEL(LightningModule):
         ) = self.entity_detection.forward_hard(
             batch, hidden_states, threshold=self.hparams.threshold
         )
+        
+        if start.shape[0] == 0:
+            return []
 
         if start.shape[0] == 0:
             return []

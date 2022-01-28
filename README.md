@@ -55,6 +55,13 @@ Which will generate:
 
 Please cite [[1](#citation)] in your work when using this library in your experiments.
 
+### Training
+
+To train our model you can run the following comand
+```bash
+python scripts/train.py --gpus ${NUM_GPUS} --acceleration ddp --batch_size 32
+```
+
 ## Feedback
 For questions and comments, feel free to contact [Nicola De Cao](mailto:nicola.decao@gmail.com).
 

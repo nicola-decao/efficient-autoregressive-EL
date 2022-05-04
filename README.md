@@ -78,16 +78,19 @@ Language Processing (EMNLP2021).
 
 BibTeX format:
 ```
-@article{decao2021parallel,
-  title={{Highly Parallel Autoregressive Entity Linking with Discriminative Correction}},
-  author={
-    De Cao, Nicola and
-    Aziz, Wilker and
-    Titov, Ivan},
-  journal={Proceedings of the 2021 Conference on Empirical Methods in 
-           Natural Language Processing (EMNLP2021)},
-  url={https://arxiv.org/abs/2109.03792},
-  year={2021}
+@inproceedings{de-cao-etal-2021-highly,
+    title = "Highly Parallel Autoregressive Entity Linking with Discriminative Correction",
+    author = "De Cao, Nicola  and
+      Aziz, Wilker  and
+      Titov, Ivan",
+    booktitle = "Proceedings of the 2021 Conference on Empirical Methods in Natural Language Processing",
+    month = nov,
+    year = "2021",
+    address = "Online and Punta Cana, Dominican Republic",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2021.emnlp-main.604",
+    doi = "10.18653/v1/2021.emnlp-main.604",
+    pages = "7662--7669",
 }
 ```
 

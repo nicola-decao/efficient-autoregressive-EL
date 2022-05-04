@@ -70,10 +70,10 @@ MIT
 
 ## Citation
 ```
-[1] De Cao, N. et al. (2021). 
-Highly Parallel Autoregressive Entity Linking with Discriminative Correction.
-Proceedings of the 2021 Conference on Empirical Methods in Natural
-Language Processing (EMNLP2021).
+[1] De Cao Nicola, Aziz Wilker, & Titov Ivan. (2021).
+Highly parallel autoregressive entity linking with discriminative correction.
+Proceedings of the 2021 Conference on Empirical Methods in Natural Language Processing, 7662–7669.
+https://doi.org/10.18653/v1/2021.emnlp-main.604
 ```
 
 BibTeX format:
